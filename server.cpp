@@ -1,6 +1,8 @@
 #include "SDL2/SDL_net.h"
 #include <iostream>
 #include "common.cpp"
+#include <algorithm>
+
 
 int main(int argc, char* argv[])
 {
@@ -33,6 +35,7 @@ int main(int argc, char* argv[])
     int lives = 0;
     std::string guesses;
     char guess;
+    std::string depletable;
 
     std::cout << "we did it!\n";
 
@@ -44,18 +47,21 @@ int main(int argc, char* argv[])
     {
         std::cout << "give a new word : ";
         std::cin >> word;
+        std::transform(word.begin(), word.end(), word.begin(), ::tolower);
         guesses.resize(word.length());
         uint8_t len = word.length() + 1;
         send(client, &len, 1);
         std::fill_n(guesses.begin(), word.length(), '_');
+        depletable = word;
         lives = 8;
         std::cout << "guesses: ";
         std::cout.flush();
+        status = 0;
         while(lives > 0 && status < 1)
         {
             send(client, guesses.c_str(), len);
             recieve(client, &guess, 1);
-            int i = word.find(guess);
+            int i = depletable.find(guess);
             bool gotem = false;
             std::cout << guess  << " ";
             std::cout.flush();
@@ -63,23 +69,25 @@ int main(int argc, char* argv[])
             {
                 gotem = true;
                 guesses[i] = guess;
-                i = word.find(guess);
+                depletable[i] = '_';
+                i = depletable.find(guess);
             }
 
             status = gotem ? status = guesses.find('_') == std::string::npos : -1;
+            lives += status;
             send(client, &status, 1);
         }
 
-        send(client, (void*)word.c_str(), len);
-        std::cout << "wanna play another round? [Y/N]";
+        send(client, word.c_str(), len);
+        std::cout << "\nwanna play another round? [Y/N]";
         char ans;
         std::cin >> ans;
         running = ans == 'y' || ans == 'Y';
 
-        send(client, (void*)&running, 1);
+        send(client, &running, 1);
     }
 
-    std::cout << "game ended";
+    std::cout << "game ended\n";
 
     return 0;
 }

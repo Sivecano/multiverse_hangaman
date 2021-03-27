@@ -74,8 +74,8 @@ int main(int argc, char* argv[])
         }
 
         recieve(server, word, len);
-        std::cout << "the word was: " << word << "\n";
-        if (status)
+        std::cout << "\nthe word was: " << word << "\n";
+        if (status > 0)
             std::cout << "YOU WIN\n";
         else
             std::cout << "YOU LOSE\n";
