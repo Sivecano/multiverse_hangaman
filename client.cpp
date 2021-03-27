@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
     std::cout << "we are connected\n";
     int misses = 0;
     char guess;
-    int len;
+    uint8_t len;
     bool running;
     int8_t status = 0; // 0 is a correct guess, 1 is a win and -1 a miss
     char* word;
