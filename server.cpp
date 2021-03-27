@@ -4,6 +4,7 @@
 
 int main(int argc, char* argv[])
 {
+
     SDLNet_Init();
 
     IPaddress self;
@@ -23,6 +24,7 @@ int main(int argc, char* argv[])
 
     TCPsocket client;
     std::cout << "trying to connect.... ";
+    std::cout.flush();
     while (!(client = SDLNet_TCP_Accept(serv)));
 
 
@@ -36,7 +38,7 @@ int main(int argc, char* argv[])
 
     running = true;
     int8_t status;
-    SDLNet_TCP_Send(client, (void*)&running, 1);
+    SDLNet_TCP_Send(client, &running, 1);
 
     while (running)
     {
@@ -44,17 +46,19 @@ int main(int argc, char* argv[])
         std::cin >> word;
         guesses.resize(word.length());
         uint8_t len = word.length() + 1;
-        send(client, (void*)&len, 1);
+        send(client, &len, 1);
         std::fill_n(guesses.begin(), word.length(), '_');
         lives = 8;
 
         std::cout << "guesses: ";
         while(lives > 0 && status < 1)
         {
-            send(client, (void*)guesses.c_str(), len);
-            recieve(client, (void*)&guess, 1);
+            send(client, guesses.c_str(), len);
+            recieve(client, &guess, 1);
             int i = word.find(guess);
             bool gotem = false;
+            std::cout << guess  << " ";
+            std::cout.flush();
             while (i != std::string::npos)
             {
                 gotem = true;
@@ -63,7 +67,7 @@ int main(int argc, char* argv[])
             }
 
             status = gotem ? status = guesses.find('_') == std::string::npos : -1;
-            send(client, (void*)&status, 1);
+            send(client, &status, 1);
         }
 
         send(client, (void*)word.c_str(), len);

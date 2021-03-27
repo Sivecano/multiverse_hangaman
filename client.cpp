@@ -57,11 +57,13 @@ int main(int argc, char* argv[])
         misses = 0;
         recieve(server, &len, 1);
         word = new char[len];
+        status = 0;
         while (misses < 8 && status < 1)
         {
             recieve(server, word, len);
             std::cout << word << "\n";
             std::cout << "your guess: ";
+            std::cout.flush();
             std::cin >> guess;
             send(server, &guess, 1);
             recieve(server, &status, 1);
