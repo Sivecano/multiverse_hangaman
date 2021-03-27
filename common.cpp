@@ -14,6 +14,6 @@ void recieve(TCPsocket sock, type* data, int bytes)
 template<typename type>
 void send(TCPsocket sock, type* data, int bytes)
 {
-    if (SDLNet_TCP_Recv(sock, (void*)data, bytes) < bytes)
+    if (SDLNet_TCP_Send(sock, (void*)data, bytes) < bytes)
         throw std::runtime_error("we lost connection or something went horribly wrong\n");
 }

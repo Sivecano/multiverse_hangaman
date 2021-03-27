@@ -49,8 +49,8 @@ int main(int argc, char* argv[])
         send(client, &len, 1);
         std::fill_n(guesses.begin(), word.length(), '_');
         lives = 8;
-
         std::cout << "guesses: ";
+        std::cout.flush();
         while(lives > 0 && status < 1)
         {
             send(client, guesses.c_str(), len);
